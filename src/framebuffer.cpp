@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
 class Framebuffer {
 private:
@@ -8,9 +9,20 @@ private:
     uint8_t fbheight;
 
 	// a bitmap framebuffer to represent pixels
-	uint8_t[fbwidth * fbheight] fb;
+	std::vector<uint8_t> fb(fbwidth * fbheight);
 
 public:
+
+void PutPixel(uint8_t x, uint8_t y, bool state) {
+    uint8_t bit;
+    if (state)
+        bit = 0b10000000;
+    else
+        bit = 0;
+    
+    fb[(y * fbwidth) + (x / 8)] &= (~(0b10000000) >> (x % 8));
+    fb[(y * fbwidth) + (x / 8)] |= (bit >> (x % 8));
+}
 
 // swap bits a and b in a byte
 uint8_t SwapBits(uint8_t byte, unsigned int a, unsigned int b) {
@@ -90,7 +102,7 @@ std::string BitmapToBraille() {
     // get all the bits and append them to a buffer
     for (int i = 0; i < fbwidth; i++) {
         for (int j = 0; j < fbheight; j++) {
-           buffer.append(GetByte(i, j); 
+           buffer.append(UnicodeToUTF8(0x28 + GetByte(i, j)); 
         }
     }
 
@@ -98,10 +110,11 @@ std::string BitmapToBraille() {
 }
 	
 void Refresh() {
-    cout << BitmapToBraille();
+    std::cout << BitmapToBraille();
 }
 
 Framebuffer(uint8_t x, uint8_t y) {
     fbwidth = x;
     fbheight = y;
 }
+};
