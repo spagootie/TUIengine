@@ -1,6 +1,5 @@
 #include <iostream>
-
-
+#include "src/framebuffer.h"
 
 int main() {
     Framebuffer fb(10, 10);

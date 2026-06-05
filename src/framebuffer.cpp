@@ -1,19 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "framebuffer.h"
 
-class Framebuffer {
-private:
-
-    uint8_t fbwidth;
-    uint8_t fbheight;
-
-	// a bitmap framebuffer to represent pixels
-	std::vector<uint8_t> fb(fbwidth * fbheight);
-
-public:
-
-void PutPixel(uint8_t x, uint8_t y, bool state) {
+void Framebuffer::PutPixel(uint8_t x, uint8_t y, bool state) {
     uint8_t bit;
     if (state)
         bit = 0b10000000;
@@ -25,7 +15,7 @@ void PutPixel(uint8_t x, uint8_t y, bool state) {
 }
 
 // swap bits a and b in a byte
-uint8_t SwapBits(uint8_t byte, unsigned int a, unsigned int b) {
+uint8_t Framebuffer::SwapBits(uint8_t byte, unsigned int a, unsigned int b) {
     // get the bits
     uint8_t tmpa = (byte >> (a - 1)) & 0x01;
     uint8_t tmpb = (byte >> (b - 1)) & 0x01;
@@ -44,7 +34,7 @@ uint8_t SwapBits(uint8_t byte, unsigned int a, unsigned int b) {
 }
 
 // translate the dots represented as bits to an offset for Unicode
-uint8_t ByteToBraille(uint8_t byte) {
+uint8_t Framebuffer::ByteToBraille(uint8_t byte) {
     byte = SwapBits(byte, 6, 4);
     byte = SwapBits(byte, 7, 4);
     byte = SwapBits(byte, 6, 3);
@@ -55,7 +45,7 @@ uint8_t ByteToBraille(uint8_t byte) {
 
 // Everything over which I have might that cannot be torn from me remains my property!
 // Translates a codepoint to a Unicode character.
-std::string UnicodeToUTF8(unsigned int codepoint)
+std::string Framebuffer::UnicodeToUTF8(unsigned int codepoint)
 {
     std::string out;
 
@@ -82,7 +72,7 @@ std::string UnicodeToUTF8(unsigned int codepoint)
     return out;
 }
 
-uint8_t GetByte(uint8_t x, uint8_t y) {
+uint8_t Framebuffer::GetByte(uint8_t x, uint8_t y) {
     uint8_t byte;
     uint8_t mask = 0b11000000;
     uint8_t offset = (x % 4) * 2;
@@ -97,24 +87,21 @@ uint8_t GetByte(uint8_t x, uint8_t y) {
     return byte;
 }
 
-std::string BitmapToBraille() {
+std::string Framebuffer::BitmapToBraille() {
     std::string buffer;
     // get all the bits and append them to a buffer
     for (int i = 0; i < fbwidth; i++) {
         for (int j = 0; j < fbheight; j++) {
-           buffer.append(UnicodeToUTF8(0x28 + GetByte(i, j)); 
+           buffer.append(UnicodeToUTF8(0x28 + GetByte(i, j))); 
         }
     }
 
     return buffer;
 }
 	
-void Refresh() {
+void Framebuffer::Refresh() {
     std::cout << BitmapToBraille();
 }
 
-Framebuffer(uint8_t x, uint8_t y) {
-    fbwidth = x;
-    fbheight = y;
+Framebuffer::Framebuffer(uint8_t x, uint8_t y) : fb(x * y), fbwidth(x), fbheight(y) {
 }
-};
