@@ -21,14 +21,14 @@ uint8_t Framebuffer::SwapBits(uint8_t byte, unsigned int a, unsigned int b) {
     uint8_t tmpb = (byte >> (b - 1)) & 0x01;
 
     // clear the bth bit
-    byte = ~(0x01 << b - 1) & byte;
+    byte = ~(0x01 << (b - 1)) & byte;
     // set the bth bit
-    byte = byte | (tmpa << b - 1);
+    byte = byte | (tmpa << (b - 1));
 
     // clear the ath bit
-    byte = ~(0x01 << a - 1 ) & byte;
+    byte = ~(0x01 << (a - 1)) & byte;
     // set the ath bit
-    byte = byte | (tmpb << a - 1);
+    byte = byte | (tmpb << (a - 1));
 
     return byte;
 }
@@ -73,27 +73,28 @@ std::string Framebuffer::UnicodeToUTF8(unsigned int codepoint)
 }
 
 uint8_t Framebuffer::GetByte(uint8_t x, uint8_t y) {
-    uint8_t byte;
+    uint8_t byte = 0;
     uint8_t mask = 0b11000000;
     uint8_t offset = (x % 4) * 2;
 
-    uint8_t a = fb[(y * fbwidth) + (x / 4)] & (mask >> offset);
-    uint8_t b = fb[((y + 1) * fbwidth) + (x / 4)] & (mask >> offset) << offset;
-    uint8_t c = fb[((y + 2) * fbwidth) + (x / 4)] & (mask >> offset) << offset;
-    uint8_t d = fb[((y + 3) * fbwidth) + (x / 4)] & (mask >> offset) << offset;
+    uint8_t a = (fb[(y * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t b = (fb[((y + 1) * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t c = (fb[((y + 2) * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t d = (fb[((y + 3) * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
 
-    byte = a & (b >> 2) & (c >> 4) & (d >> 6);
+    byte = a | (b >> 2) | (c >> 4) | (d >> 6);
 
     return byte;
 }
 
 std::string Framebuffer::BitmapToBraille() {
     std::string buffer;
-    // get all the bits and append them to a buffer
-    for (int i = 0; i < fbwidth; i++) {
-        for (int j = 0; j < fbheight; j++) {
-           buffer.append(UnicodeToUTF8(0x28 + GetByte(i, j))); 
+   // get all the bits and append them to a buffer
+    for (int i = 0; i < fbheight; i++) {
+        for (int j = 0; j < fbwidth; j++) {
+           buffer.append(UnicodeToUTF8(0x2800 + ByteToBraille(GetByte(j, i)))); 
         }
+        buffer.append("\n");
     }
 
     return buffer;
@@ -103,5 +104,6 @@ void Framebuffer::Refresh() {
     std::cout << BitmapToBraille();
 }
 
-Framebuffer::Framebuffer(uint8_t x, uint8_t y) : fb(x * y), fbwidth(x), fbheight(y) {
+// we add 3 to prevent garbage data at the end with getbyte()
+Framebuffer::Framebuffer(uint8_t x, uint8_t y) : fb(x * (y + 3)), fbwidth(x), fbheight(y) {
 }

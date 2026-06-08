@@ -2,8 +2,8 @@
 #include "src/framebuffer.h"
 
 int main() {
-    Framebuffer fb(10, 10);
+    Framebuffer fb(20, 10);
     
-    fb.PutPixel(0, 0, true);
+    fb.PutPixel(0, 2, true);
     fb.Refresh();
 }
