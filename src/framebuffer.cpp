@@ -3,6 +3,14 @@
 #include <string>
 #include "framebuffer.h"
 
+uint8_t Framebuffer::GetWidth() {
+    return fbwidth;
+}
+
+uint8_t Framebuffer::GetHeight() {
+    return fbwidth;
+}
+
 void Framebuffer::PutPixel(uint8_t x, uint8_t y, bool state) {
     uint8_t bit;
     if (state)
@@ -10,8 +18,8 @@ void Framebuffer::PutPixel(uint8_t x, uint8_t y, bool state) {
     else
         bit = 0;
     
-    fb[(y * fbwidth) + (x / 8)] &= (~(0b10000000) >> (x % 8));
-    fb[(y * fbwidth) + (x / 8)] |= (bit >> (x % 8));
+    fb[(y * fbwidth / 4) + (x / 8)] &= (~(0b10000000) >> (x % 8));
+    fb[(y * fbwidth / 4) + (x / 8)] |= (bit >> (x % 8));
 }
 
 // swap bits a and b in a byte
@@ -77,10 +85,10 @@ uint8_t Framebuffer::GetByte(uint8_t x, uint8_t y) {
     uint8_t mask = 0b11000000;
     uint8_t offset = (x % 4) * 2;
 
-    uint8_t a = (fb[(y * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
-    uint8_t b = (fb[((y + 1) * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
-    uint8_t c = (fb[((y + 2) * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
-    uint8_t d = (fb[((y + 3) * fbwidth) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t a = (fb[((y * 4) * fbwidth / 4) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t b = (fb[((y * 4 + 1) * fbwidth / 4) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t c = (fb[((y * 4 + 2) * fbwidth / 4) + (x / 4)] & (mask >> offset)) << offset;
+    uint8_t d = (fb[((y * 4 + 3) * fbwidth / 4) + (x / 4)] & (mask >> offset)) << offset;
 
     byte = a | (b >> 2) | (c >> 4) | (d >> 6);
 

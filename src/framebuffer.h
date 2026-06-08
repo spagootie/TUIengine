@@ -14,6 +14,10 @@ private:
 
 public:
 
+uint8_t GetWidth();
+
+uint8_t GetHeight();
+
 void PutPixel(uint8_t x, uint8_t y, bool state);
 
 // swap bits a and b in a byte
