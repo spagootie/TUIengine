@@ -101,10 +101,10 @@ std::string Framebuffer::BitmapToBraille() {
         for (int j = 0; j < fbwidth; j++) {
            buffer.append(UnicodeToUTF8(0x2800 + ByteToBraille(GetByte(j, i)))); 
         }
-        buffer.append("|\n");
+        buffer.append("\n");
     }
-    for (int i = 0; i < fbwidth; i++)
-        buffer.append("-");
+//    for (int i = 0; i < fbwidth; i++)
+//        buffer.append("-");
 
     buffer.append("\n");
     return buffer;

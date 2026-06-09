@@ -3,6 +3,7 @@
 #include <string>
 #include "framebuffer.h"
 #include "draw.h"
+#include "font.h"
 
 void Drawer::DrawLineLow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     int16_t dx = x2 - x1;
@@ -73,6 +74,49 @@ void Drawer::DrawBox(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     DrawLine(x1, y1, x1, y2);
     DrawLine(x2, y1, x2, y2);
     DrawLine(x1, y2, x2, y2);
+}
+
+void Drawer::DrawChar(char c, uint32_t dx, uint32_t dy)
+{
+        int cx,cy = 0;
+        uint8_t mask[8]={128,64,32,16,8,4,2,1};
+        uint8_t *character = (uint8_t*) __font_bitmap__[c];
+        for(cy=0;cy<16;cy++) {
+                for(cx=0;cx<8;cx++){
+                        fb.PutPixel((dx) + cx, (dy) + cy, character[cy] &mask[cx] ?true : false);
+                }
+
+        }
+}
+
+
+
+void Drawer::PrintStr(const char *str, uint32_t offx, uint32_t offy) {
+static uint16_t xres = fb.GetWidth() * 2;
+static uint16_t yres = fb.GetHeight() * 4;
+
+
+	for (uint32_t i; *str != '\0'; i++, offx+=8, *str++) {
+		//if (offx >= xres/8) {
+		//	offx = 0;
+		//	offy++;
+		//}
+		//if (offy >= yres/16) offy = 0;
+
+		switch(*str) {
+			case '\n':
+				offx = -1;
+				offy++;
+				break;
+			case '\b':
+				if (offx > 0) offx = offx - 1;
+				DrawChar(' ', offx, offy);
+				offx--;
+				break;
+			default:
+				DrawChar(*str, offx, offy);
+		}
+	}
 }
 
 Drawer::Drawer(Framebuffer& myfb) : fb(myfb) {
