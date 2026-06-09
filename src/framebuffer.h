@@ -12,6 +12,7 @@ private:
 
 	std::vector<uint8_t> fb;
     std::string buffer;
+    std::string textbuffer;
 
 public:
 

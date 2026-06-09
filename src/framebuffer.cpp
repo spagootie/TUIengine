@@ -103,12 +103,15 @@ std::string Framebuffer::BitmapToBraille() {
         }
         buffer.append("|\n");
     }
+    for (int i = 0; i < fbwidth; i++)
+        buffer.append("-");
 
+    buffer.append("\n");
     return buffer;
 }
 
 void Framebuffer::BufferText(uint16_t x, uint16_t y, std::string msg) {
-    uint32_t offset = (y * fbwidth) + x;
+    uint32_t offset = (y * fbwidth * sizeof(0x2800)) + x * sizeof(0x2800);
     
     for (int i = 0; i < msg.size(); i++) {
         if (buffer[offset + i] != '\n') {
@@ -124,5 +127,5 @@ void Framebuffer::Refresh() {
 }
 
 // we add 3 to prevent garbage data at the end with getbyte()
-Framebuffer::Framebuffer(uint8_t x, uint8_t y) : fb(x * (y + 3)), fbwidth(x), fbheight(y) {
+Framebuffer::Framebuffer(uint8_t x, uint8_t y) : fb(x * (y + 3)), fbwidth(x), fbheight(y), buffer("") {
 }

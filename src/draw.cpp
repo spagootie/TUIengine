@@ -7,15 +7,17 @@
 void Drawer::DrawLineLow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     int16_t dx = x2 - x1;
     int16_t dy = y2 - y1;
-    int16_t m = dy/dx;
-    int16_t d = 2 * dy - dx;
-    int16_t y = y1;
-
     uint16_t yi = 1;
+
     if (dy < 0) {
         yi = -1;
         dy = -dy;
     }
+
+    int16_t d = (2 * dy) - dx;
+    int16_t y = y1;
+
+
 
     for (int x = x1; x <= x2; x++) {
         fb.PutPixel(x, y, true);
@@ -31,15 +33,15 @@ void Drawer::DrawLineLow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
 void Drawer::DrawLineHigh(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
     int16_t dx = x2 - x1;
     int16_t dy = y2 - y1;
-    int16_t m = dy/dx;
+    uint16_t xi = 1;
+
+    if (dx < 0) {
+        xi = -1;
+        dx = -dx;
+    }
+
     int16_t d = 2 * dx - dy;
     int16_t x = x1;
-
-    uint16_t xi = 1;
-    if (dy < 0) {
-        xi = -1;
-        dy = -dy;
-    }
 
     for (int y = y1; y <= y2; y++) {
         fb.PutPixel(x, y, true);
