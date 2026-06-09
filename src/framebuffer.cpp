@@ -96,20 +96,31 @@ uint8_t Framebuffer::GetByte(uint8_t x, uint8_t y) {
 }
 
 std::string Framebuffer::BitmapToBraille() {
-    std::string buffer;
-   // get all the bits and append them to a buffer
+    // get all the bits and append them to a buffer
     for (int i = 0; i < fbheight; i++) {
         for (int j = 0; j < fbwidth; j++) {
            buffer.append(UnicodeToUTF8(0x2800 + ByteToBraille(GetByte(j, i)))); 
         }
-        buffer.append("\n");
+        buffer.append("|\n");
     }
 
     return buffer;
 }
+
+void Framebuffer::BufferText(uint16_t x, uint16_t y, std::string msg) {
+    uint32_t offset = (y * fbwidth) + x;
+    
+    for (int i = 0; i < msg.size(); i++) {
+        if (buffer[offset + i] != '\n') {
+            buffer[offset + i] = msg[i];
+        } else {
+            buffer[offset + i + 1] = msg[i];
+        }
+    }
+}
 	
 void Framebuffer::Refresh() {
-    std::cout << BitmapToBraille();
+    std::cout << buffer;
 }
 
 // we add 3 to prevent garbage data at the end with getbyte()

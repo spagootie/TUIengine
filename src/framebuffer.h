@@ -11,6 +11,7 @@ private:
     uint8_t fbheight;
 
 	std::vector<uint8_t> fb;
+    std::string buffer;
 
 public:
 
@@ -33,6 +34,8 @@ std::string UnicodeToUTF8(unsigned int codepoint);
 uint8_t GetByte(uint8_t x, uint8_t y);
 
 std::string BitmapToBraille();
+
+void BufferText(uint16_t x, uint16_t y, std::string msg);
 	
 void Refresh();
 

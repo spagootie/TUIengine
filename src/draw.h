@@ -13,6 +13,11 @@ private:
 
     Framebuffer &fb;
 
+    void DrawLineLow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+    void DrawLineHigh(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+
+
+
 public:
 
 void DrawBox(uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
