@@ -11,8 +11,14 @@ private:
     uint8_t fbheight;
 
 	std::vector<uint8_t> fb;
+    std::string buffer;
+    std::string textbuffer;
 
 public:
+
+uint8_t GetWidth();
+
+uint8_t GetHeight();
 
 void PutPixel(uint8_t x, uint8_t y, bool state);
 
@@ -29,6 +35,8 @@ std::string UnicodeToUTF8(unsigned int codepoint);
 uint8_t GetByte(uint8_t x, uint8_t y);
 
 std::string BitmapToBraille();
+
+void BufferText(uint16_t x, uint16_t y, std::string msg);
 	
 void Refresh();
 
